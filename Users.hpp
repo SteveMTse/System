@@ -3,19 +3,50 @@
 
 #include "Standard.hpp"
 
-void login(string& username) {
-    cout<<"Username: ";
+void login(const string& username, const string& password) {
+    ifstream user;
+    user.open("Users/" + username, ios::in);
+    try {
+        if(user.is_open()) {
+            string buff;
+            getline(user, buff);
+            if(password == buff) {
+                ofstream status;
+                status.open("Users/.logedin/current.user", ios::trunc);
+                status<<username;
+                status.close();
+            }
+            else {
+                throw 2;
+            }
+            user.close();
+        }
+        else {
+            throw 1;
+        }
+    } catch (int& errer) {
+        switch(errer) {
+            case 1:
+                cout<<"User Doesn't Exists"<<endl;
+                exit(1);
+                break;
+            case 2:
+                cout<<"Password is incorrect"<<endl;
+                exit(1);
+                break;
+        }
+    }
 }
 
 void status(string& username) {
-    ifstream user;
-    user.open("/Users/.logedin/current.user", ios::in);
-    if(user.is_open()) {
-        getline(user, username);
-        if(username == "-") {
-            login();
-        }
-    }
+    // ifstream user;
+    // user.open("/Users/.logedin/current.user", ios::in);
+    // if(user.is_open()) {
+    //     getline(user, username);
+    //     if(username == "-") {
+    //         login();
+    //     }
+    // }
 }
 
 void create_user(string username, string password) {
